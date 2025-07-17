@@ -7,18 +7,6 @@ services:
     container_name: speech-api
     ports:
       - "8000"
-    environment:
-      - DEBUG=True
-      # Configurações da aplicação
-      - STT_SERVICE_TYPE=vosk
-      - STT_MODEL_PATH=/app/app/models/vosk-model-small
-      - TTS_SERVICE_TYPE=azure
-      - TTS_LANG=pt-br
-      # Configurações do Azure Speech Services
-      - AZURE_SPEECH_KEY=5o0NQX7BSLEVQP53FnoBKGyTrrOIuHzDsYP30vrXYLXiYWERoVvwJQQJ99BDACYeBjFXJ3w3AAAYACOG6h9e
-      - AZURE_SPEECH_REGION=eastus
-      - AZURE_VOICE_NAME=pt-BR-FranciscaNeural
-    # Comando para desenvolvimento com auto-reload
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
     restart: unless-stopped
     # Para acessar dispositivos de áudio, se necessário
