@@ -36,8 +36,10 @@ class AzureTTSService(TextToSpeechService):
         # Configurar idioma e voz padrão
         self.language = language
         self.speech_config.speech_synthesis_language = language
-        self.voice_name = voice_name
-        self.speech_config.speech_synthesis_voice_name = voice_name
+        self.voice_name = "pt-BR-FranciscaNeural"  # Inicializa com valor padrão
+        
+        # Usar o método set_voice para validar e configurar a voz
+        self.set_voice(voice_name)
         
         # Configuração de velocidade
         self.speed = speed
