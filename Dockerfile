@@ -19,7 +19,7 @@ FROM python:3.10-slim
 
 WORKDIR /app
 
-# Dependências para pyttsx3 e vosk
+# Dependências para pyttsx3, vosk e Azure Speech SDK
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libespeak1 \
     espeak \
@@ -27,6 +27,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     espeak-ng \
     espeak-ng-data \
     alsa-utils \
+    libssl-dev \
+    ca-certificates \
+    libasound2 \
+    libgstreamer1.0-0 \
+    libgstreamer-plugins-base1.0-0 \
+    gstreamer1.0-plugins-base \
+    gstreamer1.0-plugins-good \
+    gstreamer1.0-plugins-bad \
+    gstreamer1.0-plugins-ugly \
     && rm -rf /var/lib/apt/lists/*
 
 # Copiar wheels gerados no estágio anterior
