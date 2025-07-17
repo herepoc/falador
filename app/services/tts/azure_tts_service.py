@@ -151,7 +151,7 @@ class AzureTTSService(TextToSpeechService):
         Args:
             voice: ID da voz
         """
-        default_voice = "pt-BR-FranciscaNeural"
+        default_voice = "es-ES-IsidoraMultilingualNeural"
         
         if voice and voice in self.get_available_voices():
             self.voice_name = voice
