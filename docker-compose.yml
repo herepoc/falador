@@ -6,7 +6,7 @@ services:
     image: speech-app:latest
     container_name: speech-api
     ports:
-      - "8000:8000"
+      - "8000"
     volumes:
       # Montagem de volumes para desenvolvimento (excluindo a pasta models)
       - ./app/dependencies.py:/app/app/dependencies.py
