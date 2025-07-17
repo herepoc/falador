@@ -7,8 +7,6 @@ services:
     container_name: speech-api
     ports:
       - "8000"
-    volumes:
-      # Montagem de volumes para desenvolvimento (excluindo a pasta models)
     environment:
       - DEBUG=True
       # Configurações da aplicação
