@@ -250,7 +250,7 @@
                     headers: {
                         'Content-Type': 'application/json'
                     },
-                    body: JSON.stringify({ text, voice_id: voiceId || null })
+                    body: JSON.stringify({ text, voice: voiceId || null })
                 })
                 .then(response => {
                     if (!response.ok) {

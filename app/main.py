@@ -4,7 +4,7 @@ from fastapi.staticfiles import StaticFiles
 import uvicorn
 
 from app.config import settings
-from app.routes import stt, tts
+from app.routes import speech
 
 # Criar aplicação FastAPI
 app = FastAPI(
@@ -22,9 +22,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Incluir routers
-app.include_router(stt.router)
-app.include_router(tts.router)
+# Incluir router
+app.include_router(speech.router)
 
 # Servir arquivos estáticos (para frontend demo)
 app.mount("/static", StaticFiles(directory="static"), name="static")

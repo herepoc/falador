@@ -142,16 +142,16 @@ class AzureTTSService(TextToSpeechService):
             "pt-BR-YaraNeural"
         ]
     
-    def set_voice(self, voice_id: str) -> None:
+    def set_voice(self, voice: str) -> None:
         """
         Define a voz a ser usada
         
         Args:
-            voice_id: ID da voz
+            voice: ID da voz
         """
-        if voice_id:
-            self.voice_name = voice_id
-            self.speech_config.speech_synthesis_voice_name = voice_id
+        if voice:
+            self.voice_name = voice
+            self.speech_config.speech_synthesis_voice_name = voice
     
     def set_speed(self, speed: float) -> None:
         """

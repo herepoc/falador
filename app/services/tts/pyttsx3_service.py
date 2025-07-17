@@ -82,12 +82,12 @@ class Pyttsx3TTSService(TextToSpeechService):
         """
         return [voice.id for voice in self.engine.getProperty('voices')]
     
-    def set_voice(self, voice_id: str) -> None:
+    def set_voice(self, voice: str) -> None:
         """
         Define a voz a ser usada
         
         Args:
-            voice_id: ID da voz
+            voice: ID da voz
         """
-        if voice_id:
-            self.engine.setProperty('voice', voice_id)
+        if voice:
+            self.engine.setProperty('voice', voice)

@@ -189,13 +189,13 @@ socket.onmessage = (event) => {
 ```bash
 curl -X POST "http://localhost:8000/tts/synthesize" \
   -H "Content-Type: application/json" \
-  -d '{"text": "Olá, como vai você?", "voice_id": "pt-BR-AntonioNeural", "speed": 1.2}'
+  -d '{"text": "Olá, como vai você?", "voice": "pt-BR-AntonioNeural", "speed": 1.2}'
 ```
 
 #### Parâmetros disponíveis
 
 - **text** (obrigatório): O texto a ser convertido em áudio
-- **voice_id** (opcional): ID ou nome da voz a ser utilizada (por exemplo: "pt-BR-FranciscaNeural", "pt-BR-AntonioNeural", etc)
+- **voice** (opcional): ID ou nome da voz a ser utilizada (por exemplo: "pt-BR-FranciscaNeural", "pt-BR-AntonioNeural", etc)
 - **speed** (opcional): Velocidade da fala, onde 1.0 é velocidade normal, 0.5 é metade da velocidade e 2.0 é o dobro da velocidade
 
 ## 📦 Extensão

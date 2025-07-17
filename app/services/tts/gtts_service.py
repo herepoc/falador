@@ -111,12 +111,12 @@ class GTTSService(TextToSpeechService):
         """
         return list(self._voices.keys())
     
-    def set_voice(self, voice_id: str) -> None:
+    def set_voice(self, voice: str) -> None:
         """
         Define a voz a ser usada
         
         Args:
-            voice_id: ID da voz
+            voice: ID da voz
         """
-        if voice_id in self._voices:
-            self._current_voice = voice_id
+        if voice in self._voices:
+            self._current_voice = voice

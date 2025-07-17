@@ -18,6 +18,6 @@ class TextToSpeechService(ABC):
         pass
     
     @abstractmethod
-    def set_voice(self, voice_id: str) -> None:
+    def set_voice(self, voice: str) -> None:
         """Define a voz a ser usada"""
         pass

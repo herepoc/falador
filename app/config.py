@@ -19,7 +19,7 @@ class Settings(BaseSettings):
     # Configurações de TTS (Text-to-Speech)
     tts_service_type: str = "pyttsx3"
     tts_lang: str = "pt-br"
-    tts_voice_id: str = ""  # Deixar vazio para usar a voz padrão
+    tts_voice: str = ""  # Deixar vazio para usar a voz padrão
     
     # Configurações de servidor
     host: str = "0.0.0.0"
