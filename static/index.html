@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Speech App Demo</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            padding-top: 2rem;
+            padding-bottom: 2rem;
+        }
+        .feature-card {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .mic-button {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 1rem auto;
+        }
+        #transcript {
+            min-height: 150px;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 1rem;
+            margin-top: 1rem;
+            background-color: #f8f9fa;
+        }
+        #textToSynthesize {
+            min-height: 100px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="text-center mb-5">
+            <h1>Speech App Demo</h1>
+            <p class="lead">Demonstração de conversão de fala em texto e texto em fala</p>
+        </header>
+
+        <div class="row">
+            <!-- Speech to Text -->
+            <div class="col-lg-6">
+                <div class="feature-card">
+                    <h2 class="text-center">Speech-to-Text</h2>
+                    
+                    <div class="text-center mb-3">
+                        <button id="startRecording" class="btn btn-primary mic-button">
+                            <i class="bi bi-mic-fill"></i> 🎤
+                        </button>
+                        <p id="recordingStatus">Clique para iniciar gravação</p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h5>Transcrição:</h5>
+                        <div id="transcript" class="overflow-auto"></div>
+                    </div>
+
+                    <div class="mb-3">
+                        <h5>Arquivo de Áudio:</h5>
+                        <input type="file" class="form-control" id="audioFile" accept="audio/*">
+                        <button id="uploadAudio" class="btn btn-secondary mt-2">Enviar Áudio</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Text to Speech -->
+            <div class="col-lg-6">
+                <div class="feature-card">
+                    <h2 class="text-center">Text-to-Speech</h2>
+                    
+                    <div class="mb-3">
+                        <label for="textToSynthesize" class="form-label">Texto para sintetizar:</label>
+                        <textarea class="form-control" id="textToSynthesize" rows="3" 
+                            placeholder="Digite o texto que deseja converter para fala..."></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="voiceSelect" class="form-label">Selecione a voz:</label>
+                        <select class="form-select" id="voiceSelect">
+                            <option value="">Carregando vozes...</option>
+                        </select>
+                    </div>
+                    
+                    <button id="synthesize" class="btn btn-primary">Sintetizar</button>
+                    
+                    <div class="mt-3" id="audioOutput">
+                        <!-- Elemento de áudio será adicionado aqui -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="text-center mt-5">
+            <p>&copy; 2025 Speech App Demo</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Elementos da interface
+            const startRecordingBtn = document.getElementById('startRecording');
+            const recordingStatus = document.getElementById('recordingStatus');
+            const transcript = document.getElementById('transcript');
+            const audioFile = document.getElementById('audioFile');
+            const uploadAudioBtn = document.getElementById('uploadAudio');
+            const textToSynthesize = document.getElementById('textToSynthesize');
+            const voiceSelect = document.getElementById('voiceSelect');
+            const synthesizeBtn = document.getElementById('synthesize');
+            const audioOutput = document.getElementById('audioOutput');
+
+            // Carregar vozes disponíveis
+            fetch('/tts/voices')
+                .then(response => response.json())
+                .then(voices => {
+                    voiceSelect.innerHTML = '';
+                    voices.forEach(voice => {
+                        const option = document.createElement('option');
+                        option.value = voice.id;
+                        option.textContent = voice.name;
+                        voiceSelect.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error('Erro ao carregar vozes:', error);
+                    voiceSelect.innerHTML = '<option value="">Erro ao carregar vozes</option>';
+                });
+
+            // Variáveis para gravação
+            let mediaRecorder;
+            let audioChunks = [];
+            let isRecording = false;
+            let socket;
+
+            // Iniciar/Parar gravação
+            startRecordingBtn.addEventListener('click', () => {
+                if (isRecording) {
+                    stopRecording();
+                } else {
+                    startRecording();
+                }
+            });
+
+            // Função para iniciar gravação
+            function startRecording() {
+                navigator.mediaDevices.getUserMedia({ audio: true })
+                    .then(stream => {
+                        isRecording = true;
+                        recordingStatus.textContent = 'Gravando...';
+                        startRecordingBtn.classList.replace('btn-primary', 'btn-danger');
+                        transcript.textContent = '';
+
+                        // Iniciar WebSocket
+                        socket = new WebSocket(`ws://${window.location.host}/stt/stream`);
+                        socket.onopen = () => console.log('WebSocket conectado');
+                        socket.onmessage = (event) => {
+                            transcript.textContent += event.data + ' ';
+                        };
+                        socket.onerror = (error) => console.error('Erro no WebSocket:', error);
+
+                        // Configurar MediaRecorder
+                        mediaRecorder = new MediaRecorder(stream);
+                        audioChunks = [];
+
+                        mediaRecorder.ondataavailable = (event) => {
+                            audioChunks.push(event.data);
+                            // Enviar áudio para o servidor via WebSocket
+                            if (socket && socket.readyState === WebSocket.OPEN) {
+                                event.data.arrayBuffer().then(buffer => {
+                                    socket.send(buffer);
+                                });
+                            }
+                        };
+
+                        mediaRecorder.onstop = () => {
+                            if (socket) socket.close();
+                        };
+
+                        // Iniciar gravação
+                        mediaRecorder.start(250); // Enviar dados a cada 250ms
+                    })
+                    .catch(error => {
+                        console.error('Erro ao acessar o microfone:', error);
+                        alert('Erro ao acessar o microfone. Verifique suas permissões.');
+                    });
+            }
+
+            // Função para parar gravação
+            function stopRecording() {
+                if (mediaRecorder && isRecording) {
+                    mediaRecorder.stop();
+                    isRecording = false;
+                    recordingStatus.textContent = 'Gravação finalizada';
+                    startRecordingBtn.classList.replace('btn-danger', 'btn-primary');
+                }
+            }
+
+            // Enviar arquivo de áudio
+            uploadAudioBtn.addEventListener('click', () => {
+                const file = audioFile.files[0];
+                if (!file) {
+                    alert('Por favor, selecione um arquivo de áudio.');
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append('audio', file);
+
+                fetch('/stt/transcribe', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success && data.transcript) {
+                        transcript.textContent = data.transcript;
+                    } else {
+                        transcript.textContent = 'Erro ao transcrever áudio.';
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro ao enviar áudio:', error);
+                    transcript.textContent = 'Erro na transcrição.';
+                });
+            });
+
+            // Sintetizar texto em fala
+            synthesizeBtn.addEventListener('click', () => {
+                const text = textToSynthesize.value.trim();
+                if (!text) {
+                    alert('Por favor, digite um texto para sintetizar.');
+                    return;
+                }
+
+                const voiceId = voiceSelect.value;
+                synthesizeBtn.disabled = true;
+                synthesizeBtn.textContent = 'Processando...';
+
+                fetch('/tts/synthesize', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ text, voice_id: voiceId || null })
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erro ao sintetizar texto');
+                    }
+                    return response.blob();
+                })
+                .then(blob => {
+                    const audioUrl = URL.createObjectURL(blob);
+                    audioOutput.innerHTML = `
+                        <audio controls class="w-100 mt-2">
+                            <source src="${audioUrl}" type="audio/wav">
+                            Seu navegador não suporta o elemento de áudio.
+                        </audio>
+                        <a href="${audioUrl}" download="speech.wav" class="btn btn-sm btn-outline-secondary mt-2">
+                            Baixar Áudio
+                        </a>
+                    `;
+                })
+                .catch(error => {
+                    console.error('Erro:', error);
+                    audioOutput.innerHTML = `<div class="alert alert-danger">Erro ao sintetizar texto: ${error.message}</div>`;
+                })
+                .finally(() => {
+                    synthesizeBtn.disabled = false;
+                    synthesizeBtn.textContent = 'Sintetizar';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

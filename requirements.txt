@@ -1,0 +1,17 @@
+# Dependências principais
+fastapi>=0.100.0
+uvicorn>=0.22.0
+pydantic>=2.0.0
+pydantic-settings>=2.0.0
+python-multipart>=0.0.6
+
+# Dependências para Speech-to-Text
+vosk>=0.3.45
+
+# Dependências para Text-to-Speech
+pyttsx3>=2.90
+azure-cognitiveservices-speech>=1.31.0
+
+# Dependências opcionais (comentadas por padrão)
+# openai-whisper>=20230314  # Para implementação do Whisper
+# gTTS>=2.3.2  # Para implementação do Google TTS
