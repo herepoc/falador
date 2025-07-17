@@ -69,5 +69,21 @@ class ServiceFactory:
                 language=language,
                 voice_name=voice_name
             )
+        elif service_type == "azure_openai":
+            from app.services.tts.azure_openai_tts_service import AzureOpenAITTSService
+            api_key = kwargs.get("api_key")
+            endpoint = kwargs.get("endpoint")
+            model = kwargs.get("model", "tts-1")
+            voice = kwargs.get("voice", "nova")
+            language = kwargs.get("language", "pt-BR")
+            speed = kwargs.get("speed", 1.0)
+            return AzureOpenAITTSService(
+                api_key=api_key,
+                endpoint=endpoint,
+                model=model,
+                voice=voice,
+                language=language,
+                speed=speed
+            )
         else:
             raise ValueError(f"TTS service type '{service_type}' not supported")

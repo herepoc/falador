@@ -55,7 +55,7 @@ LABEL version="0.1.0"
 LABEL description="Speech-to-Text e Text-to-Speech API"
 
 # Porta a expor
-EXPOSE 8001
+EXPOSE 8000
 
 # Comando para iniciar a aplicação
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

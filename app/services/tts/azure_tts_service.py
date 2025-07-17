@@ -149,9 +149,14 @@ class AzureTTSService(TextToSpeechService):
         Args:
             voice: ID da voz
         """
-        if voice:
+        default_voice = "pt-BR-FranciscaNeural"
+        
+        if voice and voice in self.get_available_voices():
             self.voice_name = voice
             self.speech_config.speech_synthesis_voice_name = voice
+        else:
+            self.voice_name = default_voice
+            self.speech_config.speech_synthesis_voice_name = default_voice
     
     def set_speed(self, speed: float) -> None:
         """
