@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Depends, WebSocket, UploadFile, File, HTTPException, Response
+from fastapi import APIRouter, Depends, WebSocket, UploadFile, File, HTTPException, Response, Query
 from fastapi.responses import JSONResponse, FileResponse
 from pydantic import BaseModel
 import tempfile
 import os
-from typing import List
+from typing import List, Optional
 
 from app.interfaces.stt_service import SpeechToTextService
 from app.interfaces.tts_service import TextToSpeechService
@@ -78,12 +78,12 @@ class VoiceInfo(BaseModel):
     name: str
 
 @router.post("/tts")
-def synthesize_text(
+def synthesize_text_post(
     input_data: TextInput,
     tts_service: TextToSpeechService = Depends(get_tts_service)
 ):
     """
-    Endpoint para sintetizar texto em áudio
+    Endpoint para sintetizar texto em áudio (compatibilidade com POST)
     
     Args:
         input_data: Texto a ser sintetizado e voz opcional
@@ -106,6 +106,94 @@ def synthesize_text(
             
         # Sintetizar o texto e salvar no arquivo
         tts_service.save_to_file(input_data.text, output_path)
+        
+        # Retornar o arquivo de áudio
+        return FileResponse(
+            output_path, 
+            media_type="audio/wav", 
+            filename="speech.wav",
+            background=None  # Não excluir o arquivo após o envio
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erro na sintetização: {str(e)}")
+
+@router.get("/tts")
+def synthesize_text(
+    text: str = Query(..., description="Texto a ser sintetizado em áudio"),
+    voice: Optional[str] = Query(None, description="ID da voz a ser utilizada (opcional)"),
+    speed: float = Query(1.0, description="Velocidade da fala (1.0 = normal)"),
+    tts_service: TextToSpeechService = Depends(get_tts_service)
+):
+    """
+    Endpoint para sintetizar texto em áudio
+    
+    Args:
+        text: Texto a ser sintetizado
+        voice: ID da voz a ser utilizada (opcional)
+        speed: Velocidade da fala (1.0 = normal)
+        tts_service: Serviço de TTS (injetado)
+        
+    Returns:
+        Arquivo de áudio sintetizado
+    """
+    try:
+        if voice:
+            tts_service.set_voice(voice)
+            
+        # Configurar velocidade da fala (speed)
+        if speed != 1.0:
+            tts_service.set_speed(speed)
+            
+        # Criar arquivo temporário para guardar o áudio
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as temp_file:
+            output_path = temp_file.name
+            
+        # Sintetizar o texto e salvar no arquivo
+        tts_service.save_to_file(text, output_path)
+        
+        # Retornar o arquivo de áudio
+        return FileResponse(
+            output_path, 
+            media_type="audio/wav", 
+            filename="speech.wav",
+            background=None  # Não excluir o arquivo após o envio
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Erro na sintetização: {str(e)}")
+
+@router.get("/tts")
+def synthesize_text(
+    text: str = Query(..., description="Texto a ser sintetizado em áudio"),
+    voice: Optional[str] = Query(None, description="ID da voz a ser utilizada (opcional)"),
+    speed: float = Query(1.0, description="Velocidade da fala (1.0 = normal)"),
+    tts_service: TextToSpeechService = Depends(get_tts_service)
+):
+    """
+    Endpoint para sintetizar texto em áudio
+    
+    Args:
+        text: Texto a ser sintetizado
+        voice: ID da voz a ser utilizada (opcional)
+        speed: Velocidade da fala (1.0 = normal)
+        tts_service: Serviço de TTS (injetado)
+        
+    Returns:
+        Arquivo de áudio sintetizado
+    """
+    try:
+        if voice:
+            tts_service.set_voice(voice)
+            
+        # Configurar velocidade da fala (speed)
+        if speed != 1.0:
+            tts_service.set_speed(speed)
+            
+        # Criar arquivo temporário para guardar o áudio
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as temp_file:
+            output_path = temp_file.name
+            
+        # Sintetizar o texto e salvar no arquivo
+        tts_service.save_to_file(text, output_path)
         
         # Retornar o arquivo de áudio
         return FileResponse(
