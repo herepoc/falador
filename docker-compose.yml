@@ -9,16 +9,6 @@ services:
       - "8000"
     volumes:
       # Montagem de volumes para desenvolvimento (excluindo a pasta models)
-      - ./app/dependencies.py:/app/app/dependencies.py
-      - ./app/factories:/app/app/factories
-      - ./app/interfaces:/app/app/interfaces
-      - ./app/main.py:/app/app/main.py
-      - ./app/routes:/app/app/routes
-      - ./app/services:/app/app/services
-      - ./app/config.py:/app/app/config.py
-      - ./static:/app/static
-      # Modelos serão baixados durante o build do Docker
-      # - ./models:/app/app/models  # comentado pois não existe localmente
     environment:
       - DEBUG=True
       # Configurações da aplicação
