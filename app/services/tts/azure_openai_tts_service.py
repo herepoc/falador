@@ -10,14 +10,14 @@ class AzureOpenAITTSService(TextToSpeechService):
     Implementação do serviço de Text-to-Speech usando Azure OpenAI Services
     """
     
-    def __init__(self, api_key=None, endpoint=None, model="tts-1", voice="nova", language="pt-BR", speed=1.0):
+    def __init__(self, api_key=None, endpoint=None, model="tts", voice="nova", language="pt-BR", speed=1.0):
         """
         Inicializa o serviço Azure OpenAI TTS
         
         Args:
             api_key: Chave de API do Azure OpenAI (se None, usa variável de ambiente)
             endpoint: Endpoint do serviço Azure OpenAI (se None, usa variável de ambiente)
-            model: Modelo a ser utilizado (padrão: tts-1)
+            model: Modelo a ser utilizado (padrão: tts)
             voice: Nome da voz a ser utilizada (padrão: nova)
             language: Código do idioma (padrão: pt-BR)
             speed: Velocidade da fala (1.0 = normal)
@@ -34,15 +34,11 @@ class AzureOpenAITTSService(TextToSpeechService):
             )
         
         # Configurações do serviço
-        self.model = model  # tts-1 ou tts-1-hd
+        self.model = model  # tts ou tts-hd
         self.voice = voice  # nova, alloy, echo, fable, onyx, shimmer
         self.language = language
         self.speed = speed
         
-        # Verificar se o endpoint termina com barra e ajustar se necessário
-        if not self.endpoint.endswith('/'):
-            self.endpoint += '/'
-    
     def _generate_audio(self, text: str):
         """
         Gera áudio a partir do texto usando a API OpenAI
@@ -54,7 +50,7 @@ class AzureOpenAITTSService(TextToSpeechService):
             Dados de áudio em bytes
         """
         headers = {
-            "api-key": self.api_key,
+            "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json"
         }
         
@@ -62,14 +58,13 @@ class AzureOpenAITTSService(TextToSpeechService):
             "model": self.model,
             "input": text,
             "voice": self.voice,
-            "response_format": "mp3"
         }
         
         # Adicionar velocidade se diferente do padrão
         if self.speed != 1.0:
             data["speed"] = self.speed
             
-        url = f"{self.endpoint}openai/deployments/{self.model}/audio/speech?api-version=2023-09-01-preview"
+        url = f"{self.endpoint}/openai/deployments/tts/audio/speech?api-version=2025-03-01-preview"
         
         response = requests.post(url, headers=headers, json=data)
         

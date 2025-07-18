@@ -28,7 +28,7 @@ class Settings(BaseSettings):
     # Configurações do Azure OpenAI TTS
     azure_openai_api_key: str = ""
     azure_openai_endpoint: str = ""
-    azure_openai_tts_model: str = "tts-1"  # Ou "tts-1-hd" para maior qualidade
+    azure_openai_tts_model: str = "tts"  # Ou "tts-hd" para maior qualidade
     azure_openai_tts_voice: str = "nova"   # Outras opções: alloy, echo, fable, onyx, shimmer
     
     # Configurações de servidor

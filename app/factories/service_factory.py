@@ -73,7 +73,7 @@ class ServiceFactory:
             from app.services.tts.azure_openai_tts_service import AzureOpenAITTSService
             api_key = kwargs.get("api_key")
             endpoint = kwargs.get("endpoint")
-            model = kwargs.get("model", "tts-1")
+            model = kwargs.get("model", "tts")
             voice = kwargs.get("voice", "nova")
             language = kwargs.get("language", "pt-BR")
             speed = kwargs.get("speed", 1.0)
