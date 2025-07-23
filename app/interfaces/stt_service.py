@@ -1,9 +1,9 @@
 from abc import ABC, abstractmethod
-from typing import Generator
+from typing import Generator, Optional
 
 class SpeechToTextService(ABC):
     @abstractmethod
-    async def transcribe_audio(self, audio_data: bytes) -> str:
+    async def transcribe_audio(self, audio_data: bytes, language: Optional[str] = None) -> str:
         """Transcreve dados de áudio para texto"""
         pass
     

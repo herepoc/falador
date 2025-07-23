@@ -1,6 +1,6 @@
 import io
 import tempfile
-from typing import Generator
+from typing import Generator, Optional
 import os
 
 from app.interfaces.stt_service import SpeechToTextService
@@ -32,7 +32,7 @@ class WhisperSTTService(SpeechToTextService):
         except ImportError:
             raise ImportError("OpenAI Whisper não está instalado. Execute 'pip install openai-whisper' para instalar.")
         
-    async def transcribe_audio(self, audio_data: bytes) -> str:
+    async def transcribe_audio(self, audio_data: bytes, language: Optional[str] = None) -> str:
         """
         Transcreve um arquivo de áudio completo
         
@@ -49,7 +49,13 @@ class WhisperSTTService(SpeechToTextService):
             
         try:
             # Realizar transcrição
-            result = self.model.transcribe(temp_path, language="pt")
+            transcribe_params = {"audio": temp_path}
+            if language:
+                transcribe_params["language"] = language
+            else:
+                transcribe_params["language"] = "pt"  # Idioma padrão
+                
+            result = self.model.transcribe(**transcribe_params)
             return result["text"]
         finally:
             # Limpar arquivo temporário

@@ -19,6 +19,7 @@ router = APIRouter(
 @router.post("/stt")
 async def transcribe_audio(
     audio: UploadFile = File(...),
+    language: Optional[str] = Query(None, description="Código do idioma (2 letras): en, es, pt, etc."),
     stt_service: SpeechToTextService = Depends(get_stt_service)
 ):
     """
@@ -26,6 +27,7 @@ async def transcribe_audio(
     
     Args:
         audio: Arquivo de áudio a ser transcrito
+        language: Código do idioma (2 letras): en, es, pt, etc. (opcional)
         stt_service: Serviço de STT (injetado)
         
     Returns:
@@ -33,7 +35,7 @@ async def transcribe_audio(
     """
     try:
         audio_data = await audio.read()
-        transcript = await stt_service.transcribe_audio(audio_data)
+        transcript = await stt_service.transcribe_audio(audio_data, language=language)
         return {"success": True, "transcript": transcript}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Erro ao processar áudio: {str(e)}")

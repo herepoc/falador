@@ -1,6 +1,6 @@
 import json
 import asyncio
-from typing import Generator
+from typing import Generator, Optional
 import io
 import wave
 
@@ -31,7 +31,7 @@ class VoskSTTService(SpeechToTextService):
         except ImportError:
             raise ImportError("Vosk não está instalado. Execute 'pip install vosk' para instalar.")
         
-    async def transcribe_audio(self, audio_data: bytes) -> str:
+    async def transcribe_audio(self, audio_data: bytes, language: Optional[str] = None) -> str:
         """
         Transcreve um arquivo de áudio completo
         

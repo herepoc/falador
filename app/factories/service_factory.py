@@ -32,6 +32,9 @@ class ServiceFactory:
             from app.services.stt.whisper_service import WhisperSTTService
             model_name = kwargs.get("model_name", "tiny")
             return WhisperSTTService(model_name=model_name)
+        elif service_type == "azure_openai":
+            from app.services.stt.azure_openai_service import AzureOpenAISTTService
+            return AzureOpenAISTTService()
         else:
             raise ValueError(f"STT service type '{service_type}' not supported")
     

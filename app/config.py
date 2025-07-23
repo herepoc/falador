@@ -24,12 +24,22 @@ class Settings(BaseSettings):
     # Configurações de Azure TTS
     azure_speech_key: str = ""
     azure_speech_region: str = ""
+    azure_voice_name: str = ""
     
     # Configurações do Azure OpenAI TTS
-    azure_openai_api_key: str = ""
-    azure_openai_endpoint: str = ""
+    azure_openai_tts_endpoint: str = ""
     azure_openai_tts_model: str = "tts"  # Ou "tts-hd" para maior qualidade
     azure_openai_tts_voice: str = "nova"   # Outras opções: alloy, echo, fable, onyx, shimmer
+    azure_openai_tts_api_version: str = "2025-03-01-preview"
+    
+    # Configurações do Azure OpenAI STT (Whisper)
+    azure_openai_stt_endpoint: str = ""
+    azure_openai_stt_deployment: str = "whisper"  # Nome do deployment do modelo Whisper
+    azure_openai_stt_api_version: str = "2025-03-01-preview"
+    
+    # Configurações legadas (fallback para compatibilidade)
+    azure_openai_api_key: str = ""
+    azure_openai_endpoint: str = ""
     
     # Configurações de servidor
     host: str = "0.0.0.0"
