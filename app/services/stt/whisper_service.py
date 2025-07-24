@@ -1,6 +1,6 @@
 import io
 import tempfile
-from typing import Generator, Optional
+from typing import Generator, Optional, Dict
 import os
 
 from app.interfaces.stt_service import SpeechToTextService
@@ -135,3 +135,13 @@ class WhisperSTTService(SpeechToTextService):
         except Exception as e:
             print(f"Erro ao processar áudio final com Whisper: {e}")
             return ""
+    
+    def get_debug_info(self) -> Dict[str, str]:
+        """Retorna informações de debug do serviço Whisper STT"""
+        return {
+            'service_type': 'OpenAI Whisper STT',
+            'model': self.model_name,
+            'sample_rate': str(self.sample_rate),
+            'audio_buffer_size': str(len(self.audio_buffer)),
+            'language': 'pt (default)'
+        }

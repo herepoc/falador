@@ -1,6 +1,6 @@
 import os
 import tempfile
-from typing import List
+from typing import List, Dict
 
 from app.interfaces.tts_service import TextToSpeechService
 
@@ -120,3 +120,15 @@ class GTTSService(TextToSpeechService):
         """
         if voice in self._voices:
             self._current_voice = voice
+    
+    def get_debug_info(self) -> Dict[str, str]:
+        """Retorna informações de debug do serviço GTTS"""
+        voice_config = self._voices.get(self._current_voice, {"lang": self.lang, "slow": False})
+        return {
+            'service_type': 'Google TTS (gTTS)',
+            'model': 'gTTS',
+            'voice': self._current_voice,
+            'language': voice_config["lang"],
+            'tld': self._tld,
+            'slow_mode': str(voice_config["slow"])
+        }

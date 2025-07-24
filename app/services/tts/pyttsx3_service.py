@@ -1,5 +1,5 @@
 import os
-from typing import List
+from typing import List, Dict
 
 from app.interfaces.tts_service import TextToSpeechService
 
@@ -91,3 +91,15 @@ class Pyttsx3TTSService(TextToSpeechService):
         """
         if voice:
             self.engine.setProperty('voice', voice)
+    
+    def get_debug_info(self) -> Dict[str, str]:
+        """Retorna informações de debug do serviço pyttsx3 TTS"""
+        current_voice = self.engine.getProperty('voice')
+        current_rate = self.engine.getProperty('rate')
+        return {
+            'service_type': 'pyttsx3 TTS',
+            'model': 'espeak',
+            'voice': current_voice if current_voice else 'default',
+            'rate': str(current_rate),
+            'available_voices_count': str(len(self.get_available_voices()))
+        }

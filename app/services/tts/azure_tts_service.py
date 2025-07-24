@@ -1,5 +1,5 @@
 import os
-from typing import List
+from typing import List, Dict
 import azure.cognitiveservices.speech as speechsdk
 from app.interfaces.tts_service import TextToSpeechService
 
@@ -194,3 +194,14 @@ class AzureTTSService(TextToSpeechService):
         </speak>"""
         
         return ssml
+    
+    def get_debug_info(self) -> Dict[str, str]:
+        """Retorna informações de debug do serviço Azure TTS"""
+        return {
+            'service_type': 'Azure TTS',
+            'model': 'Azure Speech Services',
+            'voice': self.voice_name,
+            'language': self.language,
+            'region': self.region,
+            'speed': str(self.speed)
+        }

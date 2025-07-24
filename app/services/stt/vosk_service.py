@@ -1,6 +1,6 @@
 import json
 import asyncio
-from typing import Generator, Optional
+from typing import Generator, Optional, Dict
 import io
 import wave
 
@@ -104,3 +104,13 @@ class VoskSTTService(SpeechToTextService):
             
         result = json.loads(self.recognizer.FinalResult())
         return result.get("text", "")
+    
+    def get_debug_info(self) -> Dict[str, str]:
+        """Retorna informações de debug do serviço Vosk STT"""
+        return {
+            'service_type': 'Vosk STT',
+            'model': f'Vosk Model ({self.model_path})',
+            'sample_rate': str(self.sample_rate),
+            'recognizer_active': str(self.recognizer is not None),
+            'model_path': self.model_path
+        }

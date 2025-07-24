@@ -4,7 +4,7 @@ from app.config import settings
 import tempfile
 import os
 import asyncio
-from typing import Generator, Optional
+from typing import Generator, Optional, Dict
 
 
 class AzureOpenAISTTService(SpeechToTextService):
@@ -76,3 +76,14 @@ class AzureOpenAISTTService(SpeechToTextService):
                 pass
         
         return ""
+    
+    def get_debug_info(self) -> Dict[str, str]:
+        """Retorna informações de debug do serviço Azure OpenAI STT"""
+        return {
+            'service_type': 'Azure OpenAI STT',
+            'model': self.deployment_id,
+            'endpoint': settings.azure_openai_endpoint,
+            'api_version': settings.azure_openai_stt_api_version,
+            'stream_active': str(self._stream_active),
+            'accumulated_audio_size': str(len(self._accumulated_audio))
+        }

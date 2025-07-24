@@ -1,7 +1,7 @@
 import os
 import json
 import requests
-from typing import List
+from typing import List, Dict
 import tempfile
 from app.interfaces.tts_service import TextToSpeechService
 
@@ -151,3 +151,14 @@ class AzureOpenAITTSService(TextToSpeechService):
         """
         if speed is not None:
             self.speed = speed
+    
+    def get_debug_info(self) -> Dict[str, str]:
+        """Retorna informações de debug do serviço Azure OpenAI TTS"""
+        return {
+            'service_type': 'Azure OpenAI TTS',
+            'model': self.model,
+            'voice': self.voice,
+            'language': self.language,
+            'endpoint': self.endpoint,
+            'speed': str(self.speed)
+        }

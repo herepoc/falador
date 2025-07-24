@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Generator, Optional
+from typing import Generator, Optional, Dict
 
 class SpeechToTextService(ABC):
     @abstractmethod
@@ -21,3 +21,11 @@ class SpeechToTextService(ABC):
     async def end_stream(self) -> str:
         """Finaliza a sessão de streaming e retorna a transcrição completa"""
         pass
+    
+    def get_debug_info(self) -> Dict[str, str]:
+        """Retorna informações de debug do serviço (implementação opcional)"""
+        return {
+            'service_type': self.__class__.__name__,
+            'model': None,
+            'language': None
+        }
