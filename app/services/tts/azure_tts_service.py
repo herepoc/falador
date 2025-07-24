@@ -8,7 +8,7 @@ class AzureTTSService(TextToSpeechService):
     Implementação do serviço de Text-to-Speech usando Azure Speech Services
     """
     
-    def __init__(self, subscription_key=None, region=None, language="pt-BR", voice_name="pt-BR-FranciscaNeural", speed=1.0):
+    def __init__(self, subscription_key=None, region=None, language="pt-BR", voice_name="es-AR-ElenaNeural", speed=1.0):
         """
         Inicializa o serviço Azure TTS
         
