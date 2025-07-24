@@ -19,7 +19,7 @@ class Settings(BaseSettings):
     # Configurações de TTS (Text-to-Speech)
     tts_service_type: str = "azure"
     tts_lang: str = "pt-br"
-    tts_voice: str = ""  # Deixar vazio para usar a voz padrão
+    tts_voice: str = "es-AR-ElenaNeural"  # Deixar vazio para usar a voz padrão
     
     # Configurações de Azure TTS
     azure_speech_key: str = ""
